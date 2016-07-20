@@ -1,81 +1,35 @@
 ﻿using System;
 using System.Drawing;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using static GammaSlide.GammaSlideInterop;
 
 namespace GammaSlide
 {
-    public partial class FormGammaSlide : Form
+    public partial class formGammaSlide : Form
     {
         RAMP originalGamma;
 
-        public FormGammaSlide()
+        public formGammaSlide()
         {
             InitializeComponent();
             originalGamma = GetGamma();
         }
 
-        [DllImport("gdi32.dll")]
-        public static extern bool SetDeviceGammaRamp(IntPtr hDC, ref RAMP lpRamp);
+        #region Private Methods
 
-        [DllImport("gdi32.dll")]
-        public static extern int GetDeviceGammaRamp(IntPtr hDC, ref RAMP lpRamp);
+        #endregion Private Methods
 
-        [DllImport("user32.dll")]
-        public static extern IntPtr GetDC(IntPtr hWnd);
+        #region Event Handlers
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-        public struct RAMP
+        private void formGammaSlide_FormClosing(object sender, FormClosingEventArgs e)
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
-            public UInt16[] Red;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
-            public UInt16[] Green;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
-            public UInt16[] Blue;
-        }
-
-        public RAMP GetGamma()
-        {
-            RAMP ramp = new RAMP();
-            GetDeviceGammaRamp(GetDC(IntPtr.Zero), ref ramp);
-            return ramp;
-        }
-
-        private void FormToggleGamma_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            ResetGamma();
-        }
-
-        private void FormToggleGamma_DoubleClick(object sender, EventArgs e)
-        {
-            Application.Exit();
-        }
-
-        public void SetGamma()
-        {
-            RAMP ramp = new RAMP();
-            ramp.Red = new ushort[256];
-            ramp.Green = new ushort[256];
-            ramp.Blue = new ushort[256];
-
-            for (int i = 0; i < ramp.Red.Length; i++)
-            {
-                var val = Convert.ToUInt16(Math.Max(Math.Min((i * 256) + (trackBarGamma.Value * 0x1000), 0xFFFF), 0));
-                ramp.Red[i] = ramp.Blue[i] = ramp.Green[i] = val;
-            }
-            SetDeviceGammaRamp(GetDC(IntPtr.Zero), ref ramp);
-        }
-
-        public void ResetGamma()
-        {
-            SetDeviceGammaRamp(GetDC(IntPtr.Zero), ref originalGamma);
+            SetGamma(originalGamma);
         }
 
         private void buttonSet_Click(object sender, EventArgs e)
         {
             trackBarGamma.Value = 0;
-            ResetGamma();
+            SetGamma(originalGamma);
         }
 
         private void trackBarGamma_ValueChanged(object sender, EventArgs e)
@@ -90,7 +44,28 @@ namespace GammaSlide
                 buttonSet.BackColor = Color.White;
                 buttonSet.ForeColor = Color.Black;
             }
-            SetGamma();
+            SetGamma(CalcRamp());
         }
+
+        #endregion Event Handlers
+
+        #region Private Methods
+
+        private RAMP CalcRamp()
+        {
+            RAMP ramp = new RAMP();
+            ramp.Red = new ushort[256];
+            ramp.Green = new ushort[256];
+            ramp.Blue = new ushort[256];
+
+            for (int i = 0; i < ramp.Red.Length; i++)
+            {
+                var val = Convert.ToUInt16(Math.Max(Math.Min((i * 256) + (trackBarGamma.Value * 0x1000), 0xFFFF), 0));
+                ramp.Red[i] = ramp.Blue[i] = ramp.Green[i] = val;
+            }
+            return ramp;
+        }
+
+        #endregion Private Methods
     }
 }

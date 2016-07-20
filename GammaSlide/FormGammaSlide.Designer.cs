@@ -1,6 +1,6 @@
 ﻿namespace GammaSlide
 {
-    partial class FormGammaSlide
+    partial class formGammaSlide
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormGammaSlide));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(formGammaSlide));
             this.trackBarGamma = new System.Windows.Forms.TrackBar();
             this.buttonSet = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarGamma)).BeginInit();
@@ -63,7 +63,7 @@
             this.buttonSet.UseVisualStyleBackColor = false;
             this.buttonSet.Click += new System.EventHandler(this.buttonSet_Click);
             // 
-            // FormGammaSlide
+            // formGammaSlide
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -77,10 +77,10 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "FormGammaSlide";
+            this.Name = "formGammaSlide";
             this.Text = "GammaSlide";
             this.TopMost = true;
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormToggleGamma_FormClosing);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.formGammaSlide_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.trackBarGamma)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

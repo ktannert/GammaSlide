@@ -12,7 +12,7 @@ namespace GammaSlide
         static void Main()
         {
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new FormGammaSlide());
+            Application.Run(new formGammaSlide());
         }
     }
 }

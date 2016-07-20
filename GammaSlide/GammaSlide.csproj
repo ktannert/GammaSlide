@@ -75,6 +75,7 @@
     <Compile Include="FormGammaSlide.Designer.cs">
       <DependentUpon>FormGammaSlide.cs</DependentUpon>
     </Compile>
+    <Compile Include="GammaSlideInterop.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="FormGammaSlide.resx">
