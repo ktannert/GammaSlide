@@ -16,6 +16,9 @@ namespace GammaSlide
         [DllImport("user32.dll")]
         public static extern IntPtr GetDC(IntPtr hWnd);
 
+        [DllImport("user32.dll")]
+        public static extern IntPtr ReleaseDC(IntPtr hWnd, IntPtr hdc);
+
         #endregion Interop DLLs
 
         #region Interop Structs
@@ -35,16 +38,54 @@ namespace GammaSlide
 
         #region Public Methods
 
-        public static RAMP GetGamma()
+        public static RAMP CalcRampFromGamma(float gamma)
         {
             RAMP ramp = new RAMP();
-            GetDeviceGammaRamp(GetDC(IntPtr.Zero), ref ramp);
+            ramp.Red = new ushort[256];
+            ramp.Green = new ushort[256];
+            ramp.Blue = new ushort[256];
+
+            for (int i = 0; i < ramp.Red.Length; i++)
+            {
+                var val = (ushort)Math.Min(65535, Math.Max(0, Math.Pow((double)((float)((double)(i + 1) / 256)), (double)((float)gamma)) * 65535 + 0.5));
+                ramp.Red[i] = ramp.Blue[i] = ramp.Green[i] = val;
+            }
+            return ramp;
+        }
+
+        public static float GetGammaFromRamp(RAMP ramp)
+        {
+            float single = 0f;
+            int num = 0;
+            int num1 = 0;
+            int num2 = num1 + 256;
+            for (int i = 0; i < 256; i++)
+            {
+                double num3 = (double)(i % 256) / 256;
+                double num4 = (double)ramp.Red[i] / 65536;
+                float single1 = (float)(Math.Log(num4) / Math.Log(num3));
+                single = single + single1;
+                num++;
+            }
+            return single / (float)num;
+        }
+
+        public static RAMP GetCurrentGamma()
+        {
+            RAMP ramp = new RAMP();
+            IntPtr dc = GetDC(IntPtr.Zero);
+            GetDeviceGammaRamp(dc, ref ramp);
+            ReleaseDC(IntPtr.Zero, dc);
             return ramp;
         }
 
         public static bool SetGamma(RAMP ramp)
         {
-            return SetDeviceGammaRamp(GetDC(IntPtr.Zero), ref ramp);
+            bool result = false;
+            IntPtr dc = GetDC(IntPtr.Zero);
+            result = SetDeviceGammaRamp(dc, ref ramp);
+            ReleaseDC(IntPtr.Zero, dc);
+            return result;
         }
 
         #endregion Public Methods
